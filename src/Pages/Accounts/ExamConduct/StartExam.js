@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useContext, useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ConfigContext } from '../../../Context/ConfigContext';
 import axios from 'axios';
 import './StartExam.css';
@@ -18,6 +18,8 @@ const StartExam = () => {
     const [submitted, setSubmitted] = useState(false);
     const [showReview, setShowReview] = useState(false);
     const [bgImageLoaded, setBgImageLoaded] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(true);
 
     const GetExamQuestions = async () => {
         try {
@@ -30,7 +32,7 @@ const StartExam = () => {
                 const data = response?.data?.data;
                 setExamData(data);
                 const initialAnswers = {};
-                data.forEach((question, index) => {
+                data.forEach((_, index) => {
                     initialAnswers[index] = '';
                 });
                 setAnswers(initialAnswers);
@@ -40,12 +42,75 @@ const StartExam = () => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
-    // Preload background image
+    // ✅ Fullscreen Enter function - now triggered by user click
+    const enterFullscreen = () => {
+        const element = document.documentElement;
+        if (element.requestFullscreen) {
+            element.requestFullscreen().then(() => {
+                setIsFullscreen(true);
+                setShowFullscreenPrompt(false);
+            }).catch(err => {
+                console.log("Fullscreen error: ", err);
+                setShowFullscreenPrompt(false); // Hide prompt even if fullscreen fails
+            });
+        } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+    };
+
+    // ✅ Exit Fullscreen function
+    const exitFullscreen = () => {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+    };
+
+    // ✅ Listen to fullscreen changes
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+        document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+        document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+
+        return () => {
+            document.removeEventListener("fullscreenchange", handleFullscreenChange);
+            document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+            document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
+            document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
+        };
+    }, []);
+
+    // ✅ Timer logic
+    useEffect(() => {
+        if (timeLeft > 0 && !submitted) {
+            const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+            return () => clearTimeout(timer);
+        } else if (timeLeft === 0 && !submitted) {
+            handleSubmit();
+        }
+    }, [timeLeft, submitted]);
+
+    // ✅ Fetch exam data
+    useEffect(() => {
+        GetExamQuestions();
+        window.scrollTo(0, 0);
+    }, []);
+
+    // ✅ Preload background image
     useEffect(() => {
         const img = new Image();
-        img.src = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80';
+        img.src = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=2070&q=80';
         img.onload = () => setBgImageLoaded(true);
         img.onerror = () => {
             console.log('Background image failed to load, using gradient fallback');
@@ -61,26 +126,21 @@ const StartExam = () => {
     };
 
     const handleNext = () => {
-        if (currentQuestion < examData.length - 1) {
-            setCurrentQuestion(prev => prev + 1);
-        }
+        if (currentQuestion < examData.length - 1) setCurrentQuestion(prev => prev + 1);
     };
 
     const handlePrevious = () => {
-        if (currentQuestion > 0) {
-            setCurrentQuestion(prev => prev - 1);
-        }
+        if (currentQuestion > 0) setCurrentQuestion(prev => prev - 1);
     };
 
-    const handleQuestionNavigation = (index) => {
-        setCurrentQuestion(index);
-    };
+    const handleQuestionNavigation = (index) => setCurrentQuestion(index);
 
     const handleSubmit = () => {
         if (window.confirm("Are you sure you want to submit the exam? You cannot change your answers after submission.")) {
             setSubmitted(true);
             console.log("Submitted answers:", answers);
             alert("Exam submitted successfully!");
+            exitFullscreen();
             navigate('/');
         }
     };
@@ -91,28 +151,43 @@ const StartExam = () => {
         return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
 
-    const getAnswerStatus = (index) => {
-        if (answers[index]) return 'answered';
-        return 'unanswered';
-    };
+    const getAnswerStatus = (index) => answers[index] ? 'answered' : 'unanswered';
 
-    // Timer effect
-    useEffect(() => {
-        if (timeLeft > 0 && !submitted) {
-            const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-            return () => clearTimeout(timer);
-        } else if (timeLeft === 0 && !submitted) {
-            handleSubmit();
-        }
-    }, [timeLeft, submitted]);
-
-    useEffect(() => {
-        GetExamQuestions();
-    }, []);
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
+    // ✅ Fullscreen Prompt Component
+    if (showFullscreenPrompt && !isFullscreen) {
+        return (
+            <div className='main-content bg-loading'>
+                <div className='page-content'>
+                    <div className='container-fluid'>
+                        <div className='d-flex justify-content-center align-items-center' style={{ minHeight: '100vh' }}>
+                            <div className="card shadow-lg border-0" style={{ maxWidth: '500px' }}>
+                                <div className="card-body p-5 text-center">
+                                    <div className="mb-4">
+                                        <i className="fas fa-expand-alt text-primary fa-4x mb-3"></i>
+                                        <h3 className='text-dark mb-3'>Fullscreen Mode Required</h3>
+                                        <p className='text-muted'>
+                                            For the best exam experience and to maintain exam integrity,
+                                            please enable fullscreen mode.
+                                        </p>
+                                    </div>
+                                    <button
+                                        className='btn btn-primary btn-lg w-100'
+                                        onClick={enterFullscreen}
+                                    >
+                                        <i className="fas fa-expand-alt me-2"></i>
+                                        Enter Fullscreen Mode
+                                    </button>
+                                    <small className='text-muted mt-3 d-block'>
+                                        You can press F11 or Esc to exit fullscreen later
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (loading || !bgImageLoaded) {
         return (
@@ -129,22 +204,37 @@ const StartExam = () => {
                         </div>
                     </div>
                 </div>
-            </div >
+            </div>
         );
     }
 
     const currentQ = examData[currentQuestion];
-    const progress = ((currentQuestion + 1) / examData.length) * 100;
     const answeredCount = Object.values(answers).filter(a => a !== '').length;
 
     return (
         <div className='main-content exam-bg overlay-effect'>
             <div className='page-content'>
                 <div className='container-fluid'>
+                    {/* Fullscreen Status */}
+                    <div className="text-center mb-2">
+                        <small className={`badge ${isFullscreen ? 'bg-success' : 'bg-warning'}`}>
+                            {isFullscreen ? "✅ Fullscreen Mode" : "⚠️ Normal Mode"}
+                        </small>
+                        {!isFullscreen && (
+                            <button
+                                className='btn btn-sm btn-outline-primary ms-2'
+                                onClick={enterFullscreen}
+                            >
+                                <i className="fas fa-expand-alt me-1"></i>
+                                Enter Fullscreen
+                            </button>
+                        )}
+                    </div>
+
                     {/* Header Section */}
                     <div className='row mb-3'>
                         <div className='col-md-6'>
-                            <div className='card border-0 card-animate cursor-pointer'>
+                            <div className='card border-0 card-animate'>
                                 <div className='card-body'>
                                     <div className='row align-items-center'>
                                         <div className='col-md-8'>

@@ -12,7 +12,6 @@ export default function AppLayout() {
                     <Outlet />
                 </Suspense>
             </main>
-            {/* <Footer /> */}
         </>
     )
 }

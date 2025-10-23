@@ -1,18 +1,16 @@
-import StartExam from "../Pages/Accounts/ExamConduct/StartExam";
+import MyProfile from "../Pages/Accounts/MyProfile/MyProfile";
 import StudentExam from "../Pages/Accounts/MyProfile/Tabs/StudentExam";
-import StudentProfile from "../Pages/Accounts/MyProfile/Tabs/StudentProfile";
 import Dashboard from "../Pages/Dashboard/Dashboard";
 
 const routes = [
   { path: "/", element: <Dashboard /> },
 
   // ------------------ Students Profile // ------------------ 
-  { path: "/Student/Profile", element: <StudentProfile /> },
+  { path: "/Student/Profile", element: <MyProfile /> },
 
 
   { path: "/Student/UpcomingExam", element: <StudentExam /> },
   { path: "/Student/Exam", element: <StudentExam /> },
-  { path: "/Student/StartExam/:master_subject_id?", element: <StartExam /> },
 ];
 
 export default routes;

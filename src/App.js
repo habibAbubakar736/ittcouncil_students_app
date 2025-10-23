@@ -7,7 +7,7 @@ import routes from './Routes/routes';
 import Page404 from './Layout/Page404';
 import Login from './Pages/Auth/Login';
 import ProtectedRoute from './Routes/protectedRoute';
-
+import StartExam from "./Pages/Accounts/ExamConduct/StartExam";
 
 const isTokenValid = () => {
   const token = localStorage.getItem('token');
@@ -47,19 +47,33 @@ const App = () => {
     }
   }, [])
 
-  const mRoutes = isTokenValid() ? [
-    {
-      element: <ProtectedRoute>
-        <AppLayout />
-      </ProtectedRoute>,
-      errorElement: <Page404 />,
-      children: routes,
-    },
-  ]
+  const mRoutes = isTokenValid()
+    ? [
+      {
+        // Pages with Header/Footer
+        element: (
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        ),
+        errorElement: <Page404 />,
+        children: routes,
+      },
+      {
+        path: "/Student/StartExam/:master_subject_id",
+        element: (
+          <ProtectedRoute>
+            <StartExam />
+          </ProtectedRoute>
+        ),
+      },
+    ]
     : [
       { path: '/', element: <Login /> },
       { path: '*', element: <Login /> },
     ];
+
+
 
   const router = createBrowserRouter(mRoutes);
 
