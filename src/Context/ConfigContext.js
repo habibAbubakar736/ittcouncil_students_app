@@ -11,7 +11,7 @@ export const ConfigProvider = ({ children }) => {
     const [apiHeaderJson] = useState({ "Content-Type": "application/json", token: `${token}`, student_id: `${student_id}`, "student_id": student_id });
     const [apiHeaderFile] = useState({ "Content-Type": "multipart/form-data", token: `${token}`, student_id: `${student_id}`, "student_id": student_id });
 
-    const primaryColor = "#ec5e1b";
+    const primaryColor = "#ea4b00";
 
     const handleUpdateLogin = (data) => {
         setToken(data?.token);

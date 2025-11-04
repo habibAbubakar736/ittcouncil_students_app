@@ -6,7 +6,7 @@ import images from '../Utils/Images'
 
 const Header = () => {
 
-    const { apiURL, apiHeaderJson, LogoutStudent, student_id } = useContext(ConfigContext)
+    const { apiURL, apiHeaderJson, LogoutStudent, student_id, primaryColor } = useContext(ConfigContext)
     const headers = apiHeaderJson;
 
     const [info, setInfo] = useState({});
@@ -39,7 +39,9 @@ const Header = () => {
 
     return (
         <>
-            <header id="page-topbar">
+            <header id="page-topbar"
+            // style={{ background: primaryColor }}
+            >
                 <div className="layout-width">
                     <div className="navbar-header">
                         <div className="d-flex">
@@ -176,6 +178,31 @@ const Header = () => {
                                     <span>Profile</span>
                                 </Link>
                             </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/Student/Programs">
+                                    <i className="ri-dashboard-2-line" />
+                                    <span>Programs</span>
+                                </Link>
+                            </li>
+
+                            <li className="nav-item">
+                                <a className="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
+                                    <i className="ri-dashboard-2-line" /> <span>Reports</span>
+                                </a>
+                                <div className="collapse menu-dropdown" id="sidebarDashboards">
+                                    <ul className="nav nav-sm flex-column">
+                                        <li className="nav-item">
+                                            <Link to="/Reports/PassOut" className="nav-link" data-key="t-analytics"> Passout </Link>
+                                        </li>
+
+                                        <li className="nav-item">
+                                            <Link to="/Reports/FailedOut" className="nav-link" data-key="t-analytics"> Failout </Link>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+
                         </ul>
                     </div>
                     {/* Sidebar */}

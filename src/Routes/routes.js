@@ -1,16 +1,23 @@
+import UpcominExam from "../Pages/Accounts/ExamConduct/UpcominExam";
 import MyProfile from "../Pages/Accounts/MyProfile/MyProfile";
-import StudentExam from "../Pages/Accounts/MyProfile/Tabs/StudentExam";
+import StudentsPrograms from "../Pages/Accounts/MyProfile/StudentsPrograms";
 import Dashboard from "../Pages/Dashboard/Dashboard";
+import FailedOutReport from "../Pages/Reports/FailedOutReport";
+import PassOutReport from "../Pages/Reports/PassOutReport";
 
 const routes = [
   { path: "/", element: <Dashboard /> },
 
   // ------------------ Students Profile // ------------------ 
   { path: "/Student/Profile", element: <MyProfile /> },
+  { path: "/Student/Programs", element: <StudentsPrograms /> },
+  { path: "/Student/UpcominExam", element: <UpcominExam /> },
+
+  { path: "/Reports/PassOut", element: <PassOutReport /> },
+  { path: "/Reports/FailedOut", element: <FailedOutReport /> },
 
 
-  { path: "/Student/UpcomingExam", element: <StudentExam /> },
-  { path: "/Student/Exam", element: <StudentExam /> },
+
 ];
 
 export default routes;
