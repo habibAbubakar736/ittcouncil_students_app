@@ -1,3 +1,4 @@
+import ExamDetails from "../Pages/Accounts/ExamConduct/ExamDetails";
 import UpcominExam from "../Pages/Accounts/ExamConduct/UpcominExam";
 import MyProfile from "../Pages/Accounts/MyProfile/MyProfile";
 import StudentsPrograms from "../Pages/Accounts/MyProfile/StudentsPrograms";
@@ -12,6 +13,7 @@ const routes = [
   { path: "/Student/Profile", element: <MyProfile /> },
   { path: "/Student/Programs", element: <StudentsPrograms /> },
   { path: "/Student/UpcominExam", element: <UpcominExam /> },
+  { path: "/Student/ExamDetails/:student_subject_id?", element: <ExamDetails /> },
 
   { path: "/Reports/PassOut", element: <PassOutReport /> },
   { path: "/Reports/FailedOut", element: <FailedOutReport /> },

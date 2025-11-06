@@ -3,12 +3,14 @@ import PageTitle from '../../../Components/PageTitle';
 import { ConfigContext } from '../../../Context/ConfigContext';
 import axios from 'axios';
 import { DateFormater } from '../../../Components/GLobal';
+import { useNavigate } from 'react-router-dom';
 
 const UpcomingExam = () => {
     const { apiURL, apiHeaderJson, primaryColor, student_id } = useContext(ConfigContext);
 
     const [loading, setLoading] = useState(false);
     const [exams, setExams] = useState([]);
+    const navigate = useNavigate()
 
     const getUpcomingExams = async () => {
         try {
@@ -34,10 +36,16 @@ const UpcomingExam = () => {
     const getExamStatus = (examDate) => {
         const exam = new Date(examDate);
         const diff = Math.ceil((exam - today) / (1000 * 60 * 60 * 24));
-        if (diff === 0) return { text: 'Today', color: 'danger', icon: 'ri-error-warning-line' };
-        if (diff === 1) return { text: 'Tomorrow', color: 'warning', icon: 'ri-time-line' };
-        if (diff <= 7) return { text: `${diff} Days Left`, color: 'info', icon: 'ri-calendar-event-line' };
-        return { text: 'Upcoming', color: 'secondary', icon: 'ri-calendar-line' };
+        if (diff === 0) return { text: 'Today', color: 'danger', icon: 'ri-error-warning-line', isExamDay: true };
+        if (diff === 1) return { text: 'Tomorrow', color: 'warning', icon: 'ri-time-line', isExamDay: false };
+        if (diff <= 7) return { text: `${diff} Days Left`, color: 'info', icon: 'ri-calendar-event-line', isExamDay: false };
+        return { text: 'Upcoming', color: 'secondary', icon: 'ri-calendar-line', isExamDay: false };
+    };
+
+    const isExamToday = (examDate) => {
+        const exam = new Date(examDate);
+        const today = new Date();
+        return exam.toDateString() === today.toDateString();
     };
 
     const soonExams = exams.filter((exam) => {
@@ -77,6 +85,13 @@ const UpcomingExam = () => {
                                                     <span className={`badge bg-${status.color}`}>{status.text}</span>
                                                     <p className="text-danger fw-bold text-decoration-underline mb-0"><strong>{DateFormater(exam.exam_date)}</strong></p>
                                                 </div>
+                                                {status.isExamDay && (
+                                                    <div className="text-center mt-3">
+                                                        <button className="btn btn-success btn-sm">
+                                                            <i className="fas fa-play me-1"></i> Start Exam
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -84,7 +99,6 @@ const UpcomingExam = () => {
                             })
                         )}
                     </div>
-
 
                     {/* Table for all upcoming exams */}
                     <div className="card shadow-sm">
@@ -118,12 +132,14 @@ const UpcomingExam = () => {
                                         <tbody>
                                             {exams.map((exam, index) => {
                                                 const status = getExamStatus(exam.exam_date);
+                                                const isToday = isExamToday(exam.exam_date);
+
                                                 return (
                                                     <tr key={index}>
                                                         <td className='fw-bold' style={{ color: primaryColor }}>{exam.student_program_id}</td>
                                                         <td className='fw-bold' style={{ color: primaryColor }}>{exam.program_title}</td>
                                                         <td>{exam.subject_title}</td>
-                                                        <td className='text-dark fw-bold'>{exam.exam_duration} min</td>
+                                                        <td className='text-dark fw-bold'>{exam.exam_duration ?? "30"} min</td>
                                                         <td className='fw-bold' style={{ color: primaryColor }}>{DateFormater(exam.exam_date)}</td>
                                                         <td>
                                                             <span className={`badge bg-${status.color}`}>
@@ -132,7 +148,9 @@ const UpcomingExam = () => {
                                                         </td>
                                                         <td>
                                                             <div className="d-flex gap-2">
-                                                                <button className="btn btn-sm btn-primary">View</button>
+                                                                <button className={`btn btn-sm ${isToday ? "btn-success" : "btn-primary"}`} onClick={() => navigate(`/Student/ExamDetails/${exam?.student_subject_id}`)}>
+                                                                    <i className="fas fa-play me-1"></i>  {isToday ? "Start" : "View"}
+                                                                </button>
                                                             </div>
                                                         </td>
                                                     </tr>
