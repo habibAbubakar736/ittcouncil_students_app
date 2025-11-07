@@ -1,12 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
 import PageTitle from '../../../Components/PageTitle'
 import { ConfigContext } from '../../../Context/ConfigContext'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { DateFormater } from '../../../Components/GLobal'
+import Swal from 'sweetalert2'
 
 const ExamDetails = () => {
     const { student_subject_id } = useParams();
+    const navigate = useNavigate();
+
+    const [isDisable, setIsDisable] = useState(false);
     const { apiURL, apiHeaderJson, primaryColor } = useContext(ConfigContext);
     const headers = apiHeaderJson;
 
@@ -62,10 +66,33 @@ const ExamDetails = () => {
 
     const examStatus = getExamStatus();
 
-    const handleStartExam = () => {
-        // Yahan ap exam start karne ka logic add kar sakte hain
-        alert('Exam starting...');
-        // navigate to exam page ya exam interface
+    const handleStartExam = async () => {
+        try {
+            setIsDisable(true);
+            const body = {
+                student_id: info?.student_id,
+                student_subject_id: info?.student_subject_id,
+                student_program_id: info?.student_program_id,
+                master_subject_id: info?.master_subject_id,
+            }
+
+            const response = await axios.post(`${apiURL}Students/StartExam`, body, { headers });
+
+            if (response?.data?.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: response?.data?.message
+                }).then(() => {
+                    navigate(`/Student/StartExam/${info?.master_subject_id}`)
+                })
+            }
+
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsDisable(false);
+        }
     }
 
     if (loading) {
@@ -194,6 +221,7 @@ const ExamDetails = () => {
                                             <button
                                                 className="btn btn-success"
                                                 onClick={handleStartExam}
+                                                disabled={isDisable}
                                             >
                                                 <i className="fas fa-play me-2"></i>
                                                 Start Exam
