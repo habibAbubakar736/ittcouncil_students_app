@@ -36,6 +36,11 @@ const StartExam = () => {
                     initialAnswers[index] = '';
                 });
                 setAnswers(initialAnswers);
+
+                // Set timer based on exam duration from API
+                if (data.length > 0 && data[0].exam_duration) {
+                    setTimeLeft(data[0].exam_duration * 60);
+                }
             }
         } catch (error) {
             console.log("error : ", error);
@@ -44,7 +49,7 @@ const StartExam = () => {
         }
     };
 
-    // ✅ Fullscreen Enter function - now triggered by user click
+    // ✅ Fullscreen Enter function
     const enterFullscreen = () => {
         const element = document.documentElement;
         if (element.requestFullscreen) {
@@ -53,23 +58,14 @@ const StartExam = () => {
                 setShowFullscreenPrompt(false);
             }).catch(err => {
                 console.log("Fullscreen error: ", err);
-                setShowFullscreenPrompt(false); // Hide prompt even if fullscreen fails
+                setShowFullscreenPrompt(false);
             });
-        } else if (element.mozRequestFullScreen) {
-            element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) {
-            element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) {
-            element.msRequestFullscreen();
         }
     };
 
     // ✅ Exit Fullscreen function
     const exitFullscreen = () => {
         if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        else if (document.msExitFullscreen) document.msExitFullscreen();
     };
 
     // ✅ Listen to fullscreen changes
@@ -79,16 +75,11 @@ const StartExam = () => {
         };
 
         document.addEventListener("fullscreenchange", handleFullscreenChange);
-        document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
-        document.addEventListener("mozfullscreenchange", handleFullscreenChange);
-        document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+        return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    }, []);
 
-        return () => {
-            document.removeEventListener("fullscreenchange", handleFullscreenChange);
-            document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
-            document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
-            document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
-        };
+    useEffect(() => {
+        enterFullscreen();
     }, []);
 
     // ✅ Timer logic
@@ -112,10 +103,7 @@ const StartExam = () => {
         const img = new Image();
         img.src = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=2070&q=80';
         img.onload = () => setBgImageLoaded(true);
-        img.onerror = () => {
-            console.log('Background image failed to load, using gradient fallback');
-            setBgImageLoaded(true);
-        };
+        img.onerror = () => setBgImageLoaded(true);
     }, []);
 
     const handleAnswerSelect = (questionIndex, answer) => {
@@ -126,14 +114,20 @@ const StartExam = () => {
     };
 
     const handleNext = () => {
-        if (currentQuestion < examData.length - 1) setCurrentQuestion(prev => prev + 1);
+        if (currentQuestion < examData.length - 1) {
+            setCurrentQuestion(prev => prev + 1);
+        }
     };
 
     const handlePrevious = () => {
-        if (currentQuestion > 0) setCurrentQuestion(prev => prev - 1);
+        if (currentQuestion > 0) {
+            setCurrentQuestion(prev => prev - 1);
+        }
     };
 
-    const handleQuestionNavigation = (index) => setCurrentQuestion(index);
+    const handleQuestionNavigation = (index) => {
+        setCurrentQuestion(index);
+    };
 
     const handleSubmit = () => {
         if (window.confirm("Are you sure you want to submit the exam? You cannot change your answers after submission.")) {
@@ -153,6 +147,13 @@ const StartExam = () => {
 
     const getAnswerStatus = (index) => answers[index] ? 'answered' : 'unanswered';
 
+    const calculateProgress = () => {
+        const answered = Object.values(answers).filter(a => a !== '').length;
+        return (answered / examData.length) * 100;
+    };
+
+    const answeredCount = Object.values(answers).filter(a => a !== '').length;
+
     // ✅ Fullscreen Prompt Component
     if (showFullscreenPrompt && !isFullscreen) {
         return (
@@ -160,7 +161,7 @@ const StartExam = () => {
                 <div className='page-content'>
                     <div className='container-fluid'>
                         <div className='d-flex justify-content-center align-items-center' style={{ minHeight: '100vh' }}>
-                            <div className="card shadow-lg border-0" style={{ maxWidth: '500px' }}>
+                            <div className="card glass-card" style={{ maxWidth: '500px' }}>
                                 <div className="card-body p-5 text-center">
                                     <div className="mb-4">
                                         <i className="fas fa-expand-alt text-primary fa-4x mb-3"></i>
@@ -209,108 +210,34 @@ const StartExam = () => {
     }
 
     const currentQ = examData[currentQuestion];
-    const answeredCount = Object.values(answers).filter(a => a !== '').length;
 
     return (
-        <div className='main-content exam-bg overlay-effect'>
-            <div className='page-content'>
+        <div className='exam-bg'>
+            <div className='pt-5'>
                 <div className='container-fluid'>
-                    {/* Fullscreen Status */}
-                    <div className="text-center mb-2">
-                        <small className={`badge ${isFullscreen ? 'bg-success' : 'bg-warning'}`}>
-                            {isFullscreen ? "✅ Fullscreen Mode" : "⚠️ Normal Mode"}
-                        </small>
-                        {!isFullscreen && (
-                            <button
-                                className='btn btn-sm btn-outline-primary ms-2'
-                                onClick={enterFullscreen}
-                            >
-                                <i className="fas fa-expand-alt me-1"></i>
-                                Enter Fullscreen
-                            </button>
-                        )}
-                    </div>
-
                     {/* Header Section */}
-                    <div className='row mb-3'>
-                        <div className='col-md-6'>
-                            <div className='card border-0 card-animate'>
+                    <div className='row mb-4'>
+                        <div className='col-12'>
+                            <div className='card glass-card card-animate'>
                                 <div className='card-body'>
                                     <div className='row align-items-center'>
-                                        <div className='col-md-8'>
-                                            <h2 className='card-title mb-2 text-dark'>
-                                                <i className="fas fa-graduation-cap me-3 text-primary"></i>
-                                                Online Examination
-                                            </h2>
-                                            <p className='text-muted mb-0'>
-                                                Test your knowledge and skills in this comprehensive assessment
-                                            </p>
+                                        <div className='col-md-6'>
+                                            <h4 className='text-primary mb-1'>{currentQ?.subject_title || 'Programming in C'}</h4>
+                                            <p className='text-muted mb-0'>{currentQ?.subject_code || 'BCA102'}</p>
                                         </div>
-                                        <div className='col-md-4 text-md-end'>
-                                            <div className={`alert ${timeLeft < 300 ? 'alert-danger' : 'alert-warning'} mb-0 border-0 shadow timer-glowing`}>
-                                                <div className="d-flex align-items-center justify-content-center">
-                                                    <i className="fas fa-clock me-2 fs-5"></i>
-                                                    <strong className='fs-5'>{formatTime(timeLeft)}</strong>
+                                        <div className='col-md-6 text-md-end'>
+                                            <div className='d-flex flex-column flex-md-row justify-content-md-end align-items-center gap-3'>
+                                                <div className='time-display'>
+                                                    <span className={`badge ${timeLeft < 300 ? 'bg-danger timer-glowing alert-danger' : timeLeft < 600 ? 'bg-warning timer-glowing' : 'bg-primary'} fs-6 p-3`}>
+                                                        <i className="fas fa-clock me-2"></i>
+                                                        {formatTime(timeLeft)}
+                                                    </span>
+                                                </div>
+                                                <div className='progress-stats'>
+                                                    <small className='text-muted'>{answeredCount}/{examData.length} answered</small>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='col-md-6'>
-                            <div className='card border-0'>
-                                <div className='card-body'>
-                                    <div className='d-flex align-items-center'>
-                                        <span className='fw-bold text-dark me-3'>Questions : </span>
-                                        <div className='simple-question-grid'>
-                                            {examData.map((_, index) => (
-                                                <button
-                                                    key={index}
-                                                    className={`simple-question-btn ${currentQuestion === index
-                                                        ? 'active-question'
-                                                        : getAnswerStatus(index) === 'answered'
-                                                            ? 'answered'
-                                                            : 'unanswered'
-                                                        }`}
-                                                    onClick={() => handleQuestionNavigation(index)}
-                                                    title={`Question ${index + 1}`}
-                                                >
-                                                    {index + 1}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className='d-flex align-items-center justify-content-between mt-2'>
-                                        <div className='status-indicators'>
-                                            <div className='d-flex gap-2'>
-                                                <div className='d-flex align-items-center gap-1'>
-                                                    <div className='status-dot current-dot'></div>
-                                                    <small className='text-muted'>Current</small>
-                                                </div>
-                                                <div className='d-flex align-items-center gap-1'>
-                                                    <div className='status-dot answered-dot'></div>
-                                                    <small className='text-muted'>Answered</small>
-                                                </div>
-                                                <div className='d-flex align-items-center gap-1'>
-                                                    <div className='status-dot unanswered-dot'></div>
-                                                    <small className='text-muted'>Unanswered</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className='progress-stats'>
-                                            <small className='text-muted'>
-                                                <strong>{answeredCount}</strong> of <strong>{examData.length}</strong> answered
-                                            </small>
-                                        </div>
-                                        <button
-                                            className='btn btn-danger btn-sm'
-                                            onClick={handleSubmit}
-                                        >
-                                            <i className="fas fa-paper-plane me-1"></i>
-                                            Submit
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -318,88 +245,131 @@ const StartExam = () => {
                     </div>
 
                     <div className='row'>
-                        {/* Main Question Area - Full Width */}
-                        <div className='col-12'>
-                            <div className='card border-0'>
-                                <div className='card-header'>
-                                    <div className='d-flex justify-content-between align-items-center'>
-                                        <span className='badge bg-primary fs-6 px-3 py-2'>Question {currentQuestion + 1} of {examData.length}</span>
-                                        <span className='badge bg-success ms-2 fs-6 px-3 py-2'>Mark: 1</span>
-                                    </div>
+                        {/* Questions Navigation Panel */}
+                        <div className='col-lg-3 col-md-4 mb-4'>
+                            <div className='card glass-card card-animate simple-navigator-card'>
+                                <div className='card-header bg-light'>
+                                    <h6 className='mb-0'><i className="fas fa-list-ol me-2"></i>Question Navigator</h6>
                                 </div>
-
                                 <div className='card-body'>
-                                    {/* Question Content */}
-                                    <div className='mb-5'>
-                                        <div className='d-flex align-items-start'>
-                                            <div className='me-3 text-primary'>
-                                                <i className="fas fa-question-circle fs-2"></i>
-                                            </div>
-                                            <div className='flex-grow-1'>
-                                                <h6 className='text-dark mb-3'>Read the question carefully and select the correct answer:</h6>
-                                                <div
-                                                    className='p-4 bg-warning rounded-3 border-0 text-white'
-                                                    dangerouslySetInnerHTML={{ __html: currentQ.question_content }}
-                                                />
-                                            </div>
+                                    <div className='simple-question-grid'>
+                                        {examData.map((_, index) => (
+                                            <button
+                                                key={index}
+                                                className={`simple-question-btn cursor-pointer ${getAnswerStatus(index)} ${currentQuestion === index ? 'active-question' : ''}`}
+                                                onClick={() => handleQuestionNavigation(index)}
+                                            >
+                                                {index + 1}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <div className='status-indicators mt-3'>
+                                        <div className='d-flex align-items-center gap-2 mb-2'>
+                                            <span className='status-dot current-dot'></span>
+                                            <small className='text-muted'>Current</small>
+                                        </div>
+                                        <div className='d-flex align-items-center gap-2 mb-2'>
+                                            <span className='status-dot answered-dot'></span>
+                                            <small className='text-muted'>Answered</small>
+                                        </div>
+                                        <div className='d-flex align-items-center gap-2'>
+                                            <span className='status-dot unanswered-dot'></span>
+                                            <small className='text-muted'>Unanswered</small>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
-                                    {/* Options */}
-                                    <div className='options-section'>
-                                        <h6 className='text-dark mb-3'>
-                                            <i className="fas fa-mouse-pointer me-2 text-primary"></i>
-                                            Select your answer:
-                                        </h6>
-                                        <div className='row g-3'>
+                            {/* Quick Actions */}
+                            <div className='card glass-card card-animate mt-3'>
+                                <div className='card-body p-3'>
+                                    <button
+                                        className='btn btn-outline-primary w-100 mb-2'
+                                        onClick={() => setShowReview(!showReview)}
+                                    >
+                                        <i className={`fas fa-eye${showReview ? '-slash' : ''} me-2`}></i>
+                                        {showReview ? 'Hide Review' : 'Show Review'}
+                                    </button>
+                                    <button
+                                        className='btn btn-danger w-100'
+                                        onClick={handleSubmit}
+                                        disabled={submitted}
+                                    >
+                                        <i className="fas fa-paper-plane me-2"></i>
+                                        Submit Exam
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Question Display Area */}
+                        <div className='col-lg-9 col-md-8'>
+                            <div className='card glass-card card-animate overlay-effect'>
+                                <div className='card-body p-4'>
+                                    {/* Question Header */}
+                                    <div className='d-flex justify-content-between align-items-start mb-4'>
+                                        <div>
+                                            <h5 className='text-primary mb-1'>Question {currentQuestion + 1}</h5>
+                                            <small className='text-muted'>Total Questions: {examData.length}</small>
+                                        </div>
+                                        <span className='badge bg-info fs-6'>Marks: {currentQ?.question_mark || 1}</span>
+                                    </div>
+
+                                    {/* Question Content */}
+                                    <div className='question-content mb-4'>
+                                        <div
+                                            className='fs-5 mb-4'
+                                            dangerouslySetInnerHTML={{ __html: currentQ?.question_content }}
+                                        />
+
+                                        {/* Question Image if available */}
+                                        {currentQ?.question_logo && (
+                                            <div className='question-image mb-4 text-center'>
+                                                <img
+                                                    src={currentQ.question_logo}
+                                                    alt="Question diagram"
+                                                    className='img-fluid rounded'
+                                                    style={{ maxHeight: '300px' }}
+                                                />
+                                            </div>
+                                        )}
+
+                                        {/* Options */}
+                                        <div className='options-container'>
                                             {['A', 'B', 'C', 'D'].map((option) => (
-                                                <div key={option} className='col-12'>
-                                                    <div
-                                                        className={`p-3 rounded-3 cursor-pointer option-card ${answers[currentQuestion] === option
-                                                            ? 'bg-primary text-white option-selected'
-                                                            : 'bg-white option-default'
-                                                            } shadow-sm border`}
-                                                        onClick={() => handleAnswerSelect(currentQuestion, option)}
-                                                    >
-                                                        <div className='d-flex align-items-center'>
-                                                            <div className={`rounded-circle d-flex align-items-center justify-content-center me-3 ${answers[currentQuestion] === option
-                                                                ? 'bg-white bg-opacity-25 text-white border-white'
-                                                                : 'bg-light text-muted border'
-                                                                }`}
-                                                                style={{ width: '30px', height: '30px', borderWidth: '2px' }}>
-                                                                <span className={`fw-bold ${answers[currentQuestion] === option ? 'text-primary' : 'text-muted'}`}>
-                                                                    {option}
-                                                                </span>
-                                                            </div>
-                                                            <div className={`fw-medium ${answers[currentQuestion] === option ? 'text-white' : 'text-dark'}`}>
-                                                                {currentQ[`objective_${option.toLowerCase()}`]}
+                                                <div
+                                                    key={option}
+                                                    className={`option-card card mb-3 p-3 cursor-pointer ${answers[currentQuestion] === option ? 'option-selected border-primary' : 'border-light'}`}
+                                                    onClick={() => handleAnswerSelect(currentQuestion, option)}
+                                                >
+                                                    <div className='d-flex align-items-start'>
+                                                        <div className='me-3 mt-1'>
+                                                            <div className={`rounded-circle d-flex align-items-center justify-content-center ${answers[currentQuestion] === option ? 'bg-primary text-white' : 'bg-light text-dark'}`}
+                                                                style={{ width: '24px', height: '24px', fontSize: '0.8rem', fontWeight: '600' }}>
+                                                                {option}
                                                             </div>
                                                         </div>
+                                                        <div className='flex-grow-1'>
+                                                            <span className='fs-6'>
+                                                                {currentQ?.[`objective_${option.toLowerCase()}`]}
+                                                            </span>
+                                                        </div>
+                                                        {answers[currentQuestion] === option && (
+                                                            <div className='ms-2 text-primary'>
+                                                                <i className="fas fa-check-circle"></i>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
 
-                                    {/* Review Section */}
-                                    {showReview && (
-                                        <div className='mt-4 p-3 bg-warning bg-opacity-10 rounded-3 border-start border-4 border-warning'>
-                                            <h6 className='text-warning mb-2'>
-                                                <i className="fas fa-lightbulb me-2"></i>
-                                                Quick Review
-                                            </h6>
-                                            <p className='text-dark mb-0 small'>
-                                                Current selection: <strong>{answers[currentQuestion] || 'Not answered'}</strong>
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Navigation Footer */}
-                                <div className='card-footer bg-transparent border-0'>
-                                    <div className='d-flex justify-content-between align-items-center'>
+                                    {/* Navigation Buttons */}
+                                    <div className='d-flex justify-content-between align-items-center pt-3 border-top'>
                                         <button
-                                            className='btn btn-outline-primary px-4 py-2 navigation-btn'
+                                            className='btn btn-outline-primary'
                                             onClick={handlePrevious}
                                             disabled={currentQuestion === 0}
                                         >
@@ -407,86 +377,63 @@ const StartExam = () => {
                                             Previous
                                         </button>
 
-                                        <div className='d-flex gap-3'>
-                                            {currentQuestion < examData.length - 1 && (
-                                                <button
-                                                    className='btn btn-outline-secondary px-4 py-2 navigation-btn'
-                                                    onClick={() => handleQuestionNavigation(currentQuestion + 1)}
-                                                >
-                                                    Skip
-                                                    <i className="fas fa-forward ms-2"></i>
-                                                </button>
-                                            )}
-
-                                            {currentQuestion === examData.length - 1 ? (
-                                                <button
-                                                    className='btn btn-success px-4 py-2 submit-btn'
-                                                    onClick={handleSubmit}
-                                                >
-                                                    <i className="fas fa-paper-plane me-2"></i>
-                                                    Submit Exam
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    className='btn btn-primary'
-                                                    onClick={handleNext}
-                                                >
-                                                    Next Question
-                                                    <i className="fas fa-arrow-right ms-2"></i>
-                                                </button>
-                                            )}
+                                        <div className='text-center'>
+                                            <small className='text-muted d-block'>
+                                                Question {currentQuestion + 1} of {examData.length}
+                                            </small>
+                                            <div className="progress" style={{ width: '120px', height: '6px' }}>
+                                                <div
+                                                    className={`progress-bar ${calculateProgress() === 100 ? 'bg-success' : 'bg-warning'}`}
+                                                    style={{ width: `${calculateProgress()}%` }}
+                                                ></div>
+                                            </div>
                                         </div>
+
+                                        <button
+                                            className='btn btn-primary'
+                                            onClick={handleNext}
+                                            disabled={currentQuestion === examData.length - 1}
+                                        >
+                                            Next
+                                            <i className="fas fa-arrow-right ms-2"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Exam Tips */}
-                            <div className='card border-0 cursor-pointer card-animate mt-4'>
-                                <div className='card-body'>
-                                    <h6 className='text-dark mb-3'>
-                                        <i className="fas fa-tips me-2 text-primary"></i>
-                                        Exam Tips
-                                    </h6>
-                                    <div className='row'>
-                                        <div className='col-md-6'>
-                                            <ul className='list-unstyled text-muted'>
-                                                <li className='mb-2'>
-                                                    <i className="fas fa-check-circle text-success me-2"></i>
-                                                    Read questions carefully
-                                                </li>
-                                                <li className='mb-2'>
-                                                    <i className="fas fa-check-circle text-success me-2"></i>
-                                                    Manage your time wisely
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className='col-md-6'>
-                                            <ul className='list-unstyled text-muted'>
-                                                <li className='mb-2'>
-                                                    <i className="fas fa-check-circle text-success me-2"></i>
-                                                    Review answers before submitting
-                                                </li>
-                                                <li className='mb-2'>
-                                                    <i className="fas fa-check-circle text-success me-2"></i>
-                                                    Flag questions for review
-                                                </li>
-                                            </ul>
-                                        </div>
+                            {/* Review Panel */}
+                            {showReview && (
+                                <div className='card glass-card card-animate mt-4'>
+                                    <div className='card-header bg-light'>
+                                        <h6 className='mb-0'><i className="fas fa-check-circle me-2"></i>Answer Review</h6>
+                                    </div>
+                                    <div className='card-body'>
+                                        {answers[currentQuestion] ? (
+                                            <div>
+                                                <p className='mb-2'>Selected Answer: <strong className='text-primary'>Option {answers[currentQuestion]}</strong></p>
+                                                <p className='text-success mb-0 fs-6'>
+                                                    <i className="fas fa-check me-2"></i>
+                                                    Your answer has been saved
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <p className='text-warning mb-2 fs-6'>
+                                                    <i className="fas fa-exclamation-triangle me-2"></i>
+                                                    No answer selected for this question
+                                                </p>
+                                                <small className='text-muted'>Click on an option above to select your answer</small>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
-
-            {/* Bootstrap Icons */}
-            <link
-                rel="stylesheet"
-                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-            />
         </div>
-    )
-}
+    );
+};
 
 export default StartExam;
