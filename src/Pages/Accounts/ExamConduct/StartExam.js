@@ -31,6 +31,9 @@ const StartExam = () => {
 
             if (response?.data?.success) {
                 const data = response?.data?.data;
+
+                console.log("data =====>", data)
+
                 setExamData(data);
                 const initialAnswers = {};
                 data.forEach((_, index) => {
@@ -114,7 +117,6 @@ const StartExam = () => {
         }));
     };
 
-
     const handleNext = async () => {
         const currentQObj = examData[currentQuestion];
         const currentAnswer = answers[currentQuestion];
@@ -139,8 +141,6 @@ const StartExam = () => {
         }
     };
 
-
-
     const handleSkip = async () => {
         const currentQObj = examData[currentQuestion];
 
@@ -150,9 +150,6 @@ const StartExam = () => {
             setCurrentQuestion(prev => prev + 1);
         }
     };
-
-
-
 
     const handlePrevious = () => {
         if (currentQuestion > 0) {
@@ -164,8 +161,8 @@ const StartExam = () => {
         setCurrentQuestion(index);
     };
 
-    const handleSubmit = () => {
-        Swal.fire({
+    const handleSubmit = async () => {
+        const result = await Swal.fire({
             title: "Submit Exam?",
             text: "Are you sure you want to submit the exam? You cannot change your answers after submission.",
             icon: "warning",
@@ -173,25 +170,46 @@ const StartExam = () => {
             confirmButtonText: "Yes, Submit",
             cancelButtonText: "Cancel",
             reverseButtons: true,
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // ✅ Perform submit actions
-                setSubmitted(true);
-                console.log("Submitted answers:", answers);
+        });
 
-                Swal.fire({
+        if (!result.isConfirmed) return;
+
+        // Mark as submitted
+        setSubmitted(true);
+
+        const payload = {
+            student_subject_id: examData[0]?.student_subject_id,
+            student_id: examData[0]?.student_id,
+            master_subject_id: examData[0]?.master_subject_id,
+            student_program_id: examData[0]?.student_program_id
+        };
+
+        try {
+            const response = await axios.post(
+                `${apiURL}Students/SubmitExam`,
+                payload,
+                { headers }
+            );
+
+            if (response.data.success) {
+                await Swal.fire({
                     title: "Exam Submitted!",
                     text: "Your exam has been successfully submitted.",
                     icon: "success",
                     confirmButtonText: "OK",
-                }).then(() => {
-                    exitFullscreen();
-                    window.location.href = "/";
                 });
-            }
-        });
-    };
 
+                exitFullscreen();
+                window.location.href = "/";
+            } else {
+                Swal.fire("Error", response.data.message || "Something went wrong", "error");
+            }
+
+        } catch (err) {
+            console.error(err);
+            Swal.fire("Error", "Failed to submit exam", "error");
+        }
+    };
 
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
@@ -267,6 +285,8 @@ const StartExam = () => {
 
     const updateExamAnswer = async (questionObj, selectedAnswer) => {
         try {
+
+            console.log(questionObj)
 
             const body = {
                 exam_answer_id: questionObj.exam_answer_id,
