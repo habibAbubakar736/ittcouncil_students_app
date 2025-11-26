@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ConfigContext } from '../../../Context/ConfigContext';
 import axios from 'axios';
+import Swal from "sweetalert2";
 import './StartExam.css';
 
 const StartExam = () => {
@@ -113,11 +114,45 @@ const StartExam = () => {
         }));
     };
 
-    const handleNext = () => {
+
+    const handleNext = async () => {
+        const currentQObj = examData[currentQuestion];
+        const currentAnswer = answers[currentQuestion];
+
+        try {
+            // 🟡 Always update the current question before moving on
+            if (currentQObj?.exam_answer_id) {
+                const answerToSave = currentAnswer ? currentAnswer : "SKIPPED";
+                await updateExamAnswer(currentQObj, answerToSave);
+            }
+
+            // 🟢 If this is NOT the last question, go to next
+            if (currentQuestion < examData.length - 1) {
+                setCurrentQuestion(prev => prev + 1);
+            }
+            // 🔴 If this IS the last question, call submit
+            else {
+                handleSubmit();
+            }
+        } catch (error) {
+            console.error("Error updating answer or submitting exam:", error);
+        }
+    };
+
+
+
+    const handleSkip = async () => {
+        const currentQObj = examData[currentQuestion];
+
+        await updateExamAnswer(currentQObj, "SKIPPED");
+
         if (currentQuestion < examData.length - 1) {
             setCurrentQuestion(prev => prev + 1);
         }
     };
+
+
+
 
     const handlePrevious = () => {
         if (currentQuestion > 0) {
@@ -130,14 +165,33 @@ const StartExam = () => {
     };
 
     const handleSubmit = () => {
-        if (window.confirm("Are you sure you want to submit the exam? You cannot change your answers after submission.")) {
-            setSubmitted(true);
-            console.log("Submitted answers:", answers);
-            alert("Exam submitted successfully!");
-            exitFullscreen();
-            navigate('/');
-        }
+        Swal.fire({
+            title: "Submit Exam?",
+            text: "Are you sure you want to submit the exam? You cannot change your answers after submission.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Submit",
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // ✅ Perform submit actions
+                setSubmitted(true);
+                console.log("Submitted answers:", answers);
+
+                Swal.fire({
+                    title: "Exam Submitted!",
+                    text: "Your exam has been successfully submitted.",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                }).then(() => {
+                    exitFullscreen();
+                    window.location.href = "/";
+                });
+            }
+        });
     };
+
 
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
@@ -145,7 +199,7 @@ const StartExam = () => {
         return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
 
-    const getAnswerStatus = (index) => answers[index] ? 'answered' : 'unanswered';
+    // const getAnswerStatus = (index) => answers[index] ? 'answered' : 'unanswered';
 
     const calculateProgress = () => {
         const answered = Object.values(answers).filter(a => a !== '').length;
@@ -210,6 +264,35 @@ const StartExam = () => {
     }
 
     const currentQ = examData[currentQuestion];
+
+    const updateExamAnswer = async (questionObj, selectedAnswer) => {
+        try {
+
+            const body = {
+                exam_answer_id: questionObj.exam_answer_id,
+                given_answer: selectedAnswer
+            }
+
+            await axios.post(`${apiURL}Students/UpdateExamAnswer`, body, { headers });
+
+            console.log(`✅ Answer saved for QID ${questionObj.exam_answer_id}:`, selectedAnswer);
+        } catch (error) {
+            console.error("❌ Failed to save answer:", error);
+        }
+    };
+
+    const getAnswerStatus = (index) => {
+        const currentQ = examData[index];
+        const givenAnswer = answers[index];
+
+        if (currentQuestion === index) return "current-question";  // highlight current
+
+        if (givenAnswer === "SKIPPED") return "skipped-question";  // bg-secondary
+        if (givenAnswer) return "answered-question";                // answered
+        return "unanswered-question";                               // not attempted
+    };
+
+
 
     return (
         <div className='exam-bg'>
@@ -389,15 +472,28 @@ const StartExam = () => {
                                             </div>
                                         </div>
 
-                                        <button
-                                            className='btn btn-primary'
-                                            onClick={handleNext}
-                                            disabled={currentQuestion === examData.length - 1}
-                                        >
-                                            Next
-                                            <i className="fas fa-arrow-right ms-2"></i>
-                                        </button>
+                                        <div className='d-flex gap-2'>
+                                            <button
+                                                className='btn btn-warning'
+                                                onClick={handleSkip}
+                                                disabled={currentQuestion === examData.length - 1}
+                                            >
+                                                <i className="fas fa-forward me-2"></i>
+                                                Skip
+                                            </button>
+
+                                            <button
+                                                className='btn btn-primary'
+                                                onClick={handleNext}
+                                                disabled={currentQuestion === examData.length - 1}
+                                            >
+                                                Next
+                                                <i className="fas fa-arrow-right ms-2"></i>
+                                            </button>
+                                        </div>
                                     </div>
+
+
                                 </div>
                             </div>
 
