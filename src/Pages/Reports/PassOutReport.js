@@ -7,10 +7,10 @@ import { NoRecords, TableRows } from '../../Components/GLobal';
 
 const PassOutReport = () => {
 
-    const { apiURL, apiHeaderJson, student_id, primaryColor } = useContext(ConfigContext);
+    const { apiURL, apiHeaderJson, student_id,  primaryColor } = useContext(ConfigContext);
     const headers = apiHeaderJson;
 
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([]); 
     const [loading, setLoading] = useState(true);
 
     const [next, setNext] = useState(false);

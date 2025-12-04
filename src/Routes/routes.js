@@ -4,6 +4,9 @@ import UpcominExam from "../Pages/Accounts/ExamConduct/UpcominExam";
 import MyProfile from "../Pages/Accounts/MyProfile/MyProfile";
 import StudentsPrograms from "../Pages/Accounts/MyProfile/StudentsPrograms";
 import Dashboard from "../Pages/Dashboard/Dashboard";
+import Provision from "../Pages/Provision/Provision";
+import Result from "../Pages/Provision/Result";
+
 import FailedOutReport from "../Pages/Reports/FailedOutReport";
 import PassOutReport from "../Pages/Reports/PassOutReport";
 
@@ -18,8 +21,8 @@ const routes = [
 
   { path: "/Reports/PassOut", element: <PassOutReport /> },
   { path: "/Reports/FailedOut", element: <FailedOutReport /> },
-
-
+  { path: "/Provision/Provision", element: <Provision /> },
+  { path: "/Provision/Result/:student_subject_id?", element: <Result /> }
 
 ];
 
