@@ -48,7 +48,7 @@ const MyProfile = () => {
                         <div className="profile-wid-bg">
                             <img src="assets/images/profile-bg.jpg" alt className="profile-wid-img" />
                             <img
-                                src='/assets/images/itt_logo.png' alt='Watermark' className='position-absolute top-50 start-50 translate-middle' style={{ width: "30%", opacity: "0.15", zIndex: 1 }}
+                                src='/assets/images/university.png' alt='Watermark' className='position-absolute top-50 start-50 translate-middle' style={{ width: "100%", height: "97%", opacity: "0.30"}}
                             />
                         </div>
                     </div>
@@ -63,7 +63,7 @@ const MyProfile = () => {
                             <div className="col">
                                 <div className="p-2">
                                     <h3 className="text-white mb-1">Abubakar</h3>
-                                    <p className="text-white text-opacity-75">Owner &amp; Founder</p>
+                                    {/* <p className="text-white text-opacity-75">Owner &amp; Founder</p> */}
                                     <div className="hstack text-white-50 gap-1">
                                         <div className="me-2"><i className="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle" />dualsysco@gmail.com</div>
                                     </div>
@@ -95,16 +95,10 @@ const MyProfile = () => {
                                     <div className="tab-pane active" id="profile-tab" role="tabpanel">
                                         <div className="card">
                                             <div className="card-body">
-                                                <h5 className="card-title mb-5 mt-2">Student Information</h5>
+                                                <h5 className="card-title mb-3 mt-2">Student Information</h5>
                                                 <div className="table-responsive">
                                                     <table className="table table-striped table-bordered mb-0">
                                                         <div className='row d-flex col-12'>
-                                                            <div className="col-md-6 mb-3">
-                                                                <div className="p-2 border rounded">
-                                                                    <strong>Student ID : </strong>
-                                                                    <span className="text-primary fw-bold">{profile.student_id}</span>
-                                                                </div>
-                                                            </div>
                                                             <div className="col-md-6 mb-3">
                                                                 <div className="p-2 border rounded">
                                                                     <strong>Student PRN No : </strong>
@@ -123,6 +117,12 @@ const MyProfile = () => {
                                                                 <div className="p-2 border rounded">
                                                                     <strong>Gender : </strong>
                                                                     <span className="text-primary fw-bold">{profile.gender}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-6 mb-3">
+                                                                <div className="p-2 border rounded">
+                                                                    <strong>Student Aadhar No : </strong>
+                                                                    {profile.student_aadhar_no?.slice(-4).padStart(profile.student_aadhar_no.length, "X")}
                                                                 </div>
                                                             </div>
 
@@ -168,16 +168,6 @@ const MyProfile = () => {
                                     <div className="tab-pane fade" id="programs" role="tabpanel">
                                         <div className="row">
                                             <div className="col-xxl-3">
-                                                <div className="card mt-3">
-                                                    <div className="card-body">
-                                                        <h5 className="card-title mb-2">Complete Your Profile</h5>
-                                                        <div className="progress animated-progress custom-progress progress-label">
-                                                            <div className="progress-bar bg-danger" role="progressbar" style={{ width: '30%' }} aria-valuenow={30} aria-valuemin={0} aria-valuemax={100}>
-                                                                <div className="label">30%</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 <div className='card'>
                                                     <div className='card-header'>
                                                         <h5 className=''>Student Programs</h5>
@@ -187,11 +177,10 @@ const MyProfile = () => {
                                                             <table className='table table-striped'>
                                                                 <thead>
                                                                     <tr>
-                                                                        <th>Program ID</th>
+                                                                        <th>Student Program ID</th>
                                                                         <th>Program Code</th>
                                                                         <th>Program Title</th>
                                                                         <th>Program Duration</th>
-                                                                        <th>Program Fees</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -202,8 +191,7 @@ const MyProfile = () => {
                                                                                     <td className='text-primary fw-bold'>{item.student_program_id}</td>
                                                                                     <td>{item.program_code}</td>
                                                                                     <td>{item.program_title}</td>
-                                                                                    <td>{item.program_duration}</td>
-                                                                                    <td className='text-success fw-bold'>{item.program_fees}</td>
+                                                                                    <td>{item.program_duration} Days</td>
                                                                                 </tr>
                                                                             )
                                                                         })
