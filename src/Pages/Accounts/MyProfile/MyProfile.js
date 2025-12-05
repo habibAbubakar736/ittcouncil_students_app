@@ -191,7 +191,7 @@ const MyProfile = () => {
                                                                                     <td className='text-primary fw-bold'>{item.student_program_id}</td>
                                                                                     <td>{item.program_code}</td>
                                                                                     <td>{item.program_title}</td>
-                                                                                    <td>{item.program_duration} Days</td>
+                                                                                    <td >{item.program_duration} Days</td>
                                                                                 </tr>
                                                                             )
                                                                         })
