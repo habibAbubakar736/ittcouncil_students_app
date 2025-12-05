@@ -178,12 +178,12 @@ const Header = () => {
                                     <span>Profile</span>
                                 </Link>
                             </li>
-                            <li className="nav-item">
+                            {/* <li className="nav-item">
                                 <Link className="nav-link" to="/Student/Programs">
                                     <i className="ri-dashboard-2-line" />
                                     <span>Programs</span>
                                 </Link>
-                            </li>
+                            </li> */}
 
                             <li className="nav-item">
                                 <a className="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">

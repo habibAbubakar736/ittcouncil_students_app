@@ -1,128 +1,248 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react'
 import { ConfigContext } from '../../../Context/ConfigContext';
 import axios from 'axios';
-import images from '../../../Utils/Images';
-import PageTitle from '../../../Components/PageTitle';
 
 const MyProfile = () => {
+
+    const [profile, setProfile] = useState([]);
+    const [program, setProgram] = useState([]);
     const { apiURL, apiHeaderJson, student_id, primaryColor } = useContext(ConfigContext);
     const headers = apiHeaderJson;
 
-    const [info, setInfo] = useState({});
-    const [loading, setLoading] = useState(true);
-
-    const GetStudentsProfile = async () => {
+    const GetStudentProfile = async () => {
         try {
-            setLoading(true);
-            const response = await axios.get(`${apiURL}Students/GetStudentsProfile`, {
-                params: { student_id },
-                headers,
-            });
-            const { data, success } = response?.data;
-            if (success) setInfo(data[0]);
+            const response = await axios.get(`${apiURL}Students/GetStudentsProfile`, { params: { student_id }, headers })
+            const { success, data } = response?.data;
+            if (success) {
+                setProfile(data[0])
+            }
         } catch (error) {
             console.log('error', error);
-        } finally {
-            setLoading(false);
         }
-    };
-
-    useEffect(() => {
-        if (student_id) GetStudentsProfile();
-    }, [student_id]);
-
-    if (loading) {
-        return (
-            <div className="main-content">
-                <div className="page-content">
-                    <div className="container-fluid">
-                        <div className="d-flex justify-content-center align-items-center vh-100">
-                            <div className="spinner-border text-primary" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
     }
 
+    const GetPrograms = async () => {
+        try {
+            const response = await axios.get(`${apiURL}Students/GetStudentsProgram`, { params: { student_id }, headers })
+            console.log('response', response.data)
+            const { success, data } = response?.data;
+            if (success) {
+                setProgram(data)
+            }
+        } catch (error) {
+            console.log('error', error);
+        }
+    }
+
+    useEffect(() => {
+        GetStudentProfile();
+        GetPrograms();
+    }, []);
+
     return (
+
         <div className="main-content">
             <div className="page-content">
                 <div className="container-fluid">
-                    <br />
-                    <PageTitle title={"My Profile"} primary={"Dashboard"} />
-
-                    <div className="row">
-                        <div className="col-md-4 mb-5">
-                            <div className="card shadow-sm border-0">
-                                <div className="card-body text-center p-4">
-                                    <img
-                                        src={info?.student_profile_url || images?.user_profile}
-                                        className="rounded-circle img-thumbnail mb-3"
-                                        style={{
-                                            width: '100px',
-                                            height: '100px',
-                                            objectFit: 'cover',
-                                            border: `3px solid ${primaryColor}`,
-                                        }}
-                                        alt="user-profile"
-                                    />
-                                    <h5 className="fw-bold mb-1" style={{ color: primaryColor }}>
-                                        {info?.student_full_name}
-                                    </h5>
-                                    <p className="text-muted mb-1">{info?.student_pnr}</p>
-                                    <p className="text-success fw-semibold mb-0">Active Student</p>
+                    <div className="profile-foreground position-relative mx-n4 mt-n4">
+                        <div className="profile-wid-bg">
+                            <img src="assets/images/profile-bg.jpg" alt className="profile-wid-img" />
+                            <img
+                                src='/assets/images/itt_logo.png' alt='Watermark' className='position-absolute top-50 start-50 translate-middle' style={{ width: "30%", opacity: "0.15", zIndex: 1 }}
+                            />
+                        </div>
+                    </div>
+                    <div className="pt-4 mb-4 mb-lg-3 pb-lg-4 profile-wrapper">
+                        <div className="row g-4">
+                            <div className="col-auto">
+                                <div className="avatar-lg">
+                                    <img src="/assets/images/profile.png" alt="user-img" className="img-thumbnail rounded-circle" />
+                                </div>
+                            </div>
+                            {/*end col*/}
+                            <div className="col">
+                                <div className="p-2">
+                                    <h3 className="text-white mb-1">Abubakar</h3>
+                                    <p className="text-white text-opacity-75">Owner &amp; Founder</p>
+                                    <div className="hstack text-white-50 gap-1">
+                                        <div className="me-2"><i className="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle" />dualsysco@gmail.com</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Right Column - Student Info */}
-                        <div className="col-md-8">
-                            <div className="card shadow-sm border-0">
-                                <div className="card-body p-4">
-                                    <h4 className="fw-bold mb-4" style={{ color: primaryColor }}>
-                                        Personal Information
-                                    </h4>
-
-                                    <div className="row gy-3 gx-4">
-                                        {[
-                                            { label: 'Full Name', icon: 'ri-user-line', value: info?.student_full_name },
-                                            { label: "Father's Name", icon: 'ri-men-line', value: info?.father_name },
-                                            { label: "Mother's Name", icon: 'ri-women-line', value: info?.mother_name },
-                                            { label: 'Gender', icon: 'ri-gender-line', value: info?.gender },
-                                            { label: 'Mobile Number', icon: 'ri-phone-line', value: info?.mobile_number },
-                                            { label: 'WhatsApp Number', icon: 'ri-whatsapp-line', value: info?.whatsapp_number },
-                                            { label: 'Email Address', icon: 'ri-mail-line', value: info?.email_address },
-                                            {
-                                                label: 'Aadhar No',
-                                                icon: 'ri-bank-card-line',
-                                                value: info?.student_aadhar_no ? `********${info.student_aadhar_no.slice(-4)}` : '-'
-                                            },
-                                            { label: 'City', icon: 'ri-map-pin-line', value: info?.student_city },
-                                            { label: 'Pincode', icon: 'ri-mail-open-line', value: info?.student_pincode },
-                                            { label: 'Address', icon: 'ri-home-4-line', value: info?.student_address },
-                                        ].map((item, index) => (
-                                            <div className="col-md-6" key={index}>
-                                                <label className="text-muted small mb-1">
-                                                    <i className={`${item.icon} me-1`}></i> {item.label}
-                                                </label>
-                                                <p className="fw-semibold mb-0">{item.value || '-'}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-
-
+                        {/*end row*/}
+                    </div>
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <div>
+                                <div className="d-flex profile-wrapper">
+                                    {/* Nav tabs */}
+                                    <ul className="nav nav-pills animation-nav profile-nav gap-2 gap-lg-3 flex-grow-1" role="tablist">
+                                        <li className="nav-item">
+                                            <a className="nav-link fs-14 active" data-bs-toggle="tab" href="#profile-tab" role="tab">
+                                                <i className="ri-airplay-fill d-inline-block d-md-none" /> <span className="d-none d-md-inline-block">Profile</span>
+                                            </a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a className="nav-link fs-14" data-bs-toggle="tab" href="#programs" role="tab">
+                                                <i className="ri-list-unordered d-inline-block d-md-none" /> <span className="d-none d-md-inline-block">Programs</span>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
+                                {/* Tab panes */}
+                                <div className="tab-content pt-4 text-muted">
+                                    <div className="tab-pane active" id="profile-tab" role="tabpanel">
+                                        <div className="card">
+                                            <div className="card-body">
+                                                <h5 className="card-title mb-5 mt-2">Student Information</h5>
+                                                <div className="table-responsive">
+                                                    <table className="table table-striped table-bordered mb-0">
+                                                        <div className='row d-flex col-12'>
+                                                            <div className="col-md-6 mb-3">
+                                                                <div className="p-2 border rounded">
+                                                                    <strong>Student ID : </strong>
+                                                                    <span className="text-primary fw-bold">{profile.student_id}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-6 mb-3">
+                                                                <div className="p-2 border rounded">
+                                                                    <strong>Student PRN No : </strong>
+                                                                    <span className="text-primary fw-bold">{profile.student_pnr}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="col-md-6 mb-3">
+                                                                <div className="p-2 border rounded">
+                                                                    <strong>Student Name : </strong>
+                                                                    <span className="text-primary fw-bold">{profile.student_full_name}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="col-md-6 mb-3">
+                                                                <div className="p-2 border rounded">
+                                                                    <strong>Gender : </strong>
+                                                                    <span className="text-primary fw-bold">{profile.gender}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="col-md-6 mb-3">
+                                                                <div className="p-2 border rounded">
+                                                                    <strong>Father Name : </strong>
+                                                                    <span className="text-primary fw-bold">{profile.father_name}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="col-md-6 mb-3">
+                                                                <div className="p-2 border rounded">
+                                                                    <strong>Mother Name : </strong>
+                                                                    <span className="text-primary fw-bold">{profile.mother_name}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="col-md-6 mb-3">
+                                                                <div className="p-2 border rounded">
+                                                                    <strong>Mobile No : </strong>
+                                                                    <span className="text-primary fw-bold">{profile.mobile_number}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-6 mb-3">
+                                                                <div className="p-2 border rounded">
+                                                                    <strong>Student Address : </strong>
+                                                                    <span className="text-primary fw-bold">{profile.student_address}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="col-md-6 mb-3">
+                                                                <div className="p-2 border rounded">
+                                                                    <strong>Student City : </strong>
+                                                                    <span className="text-primary fw-bold">{profile.student_city}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="tab-pane fade" id="programs" role="tabpanel">
+                                        <div className="row">
+                                            <div className="col-xxl-3">
+                                                <div className="card mt-3">
+                                                    <div className="card-body">
+                                                        <h5 className="card-title mb-2">Complete Your Profile</h5>
+                                                        <div className="progress animated-progress custom-progress progress-label">
+                                                            <div className="progress-bar bg-danger" role="progressbar" style={{ width: '30%' }} aria-valuenow={30} aria-valuemin={0} aria-valuemax={100}>
+                                                                <div className="label">30%</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className='card'>
+                                                    <div className='card-header'>
+                                                        <h5 className=''>Student Programs</h5>
+                                                    </div>
+                                                    <div className='card-body table-responsive'>
+                                                        <div className='col-md-12'>
+                                                            <table className='table table-striped'>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Program ID</th>
+                                                                        <th>Program Code</th>
+                                                                        <th>Program Title</th>
+                                                                        <th>Program Duration</th>
+                                                                        <th>Program Fees</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {
+                                                                        program.map((item) => {
+                                                                            return (
+                                                                                <tr>
+                                                                                    <td className='text-primary fw-bold'>{item.student_program_id}</td>
+                                                                                    <td>{item.program_code}</td>
+                                                                                    <td>{item.program_title}</td>
+                                                                                    <td>{item.program_duration}</td>
+                                                                                    <td className='text-success fw-bold'>{item.program_fees}</td>
+                                                                                </tr>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/*end tab-content*/}
+                            </div>
+                        </div>
+                        {/*end col*/}
+                    </div>
+                    {/*end row*/}
+                </div>{/* container-fluid */}
+            </div>{/* End Page-content */}
+            <footer className="footer">
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-sm-6">
+
+                        </div>
+                        <div className="col-sm-6">
+                            <div className="text-sm-end d-none d-sm-block">
+
                             </div>
                         </div>
                     </div>
-
                 </div>
-            </div>
+            </footer>
         </div>
-    );
-};
+
+
+    )
+}
 
 export default MyProfile;
