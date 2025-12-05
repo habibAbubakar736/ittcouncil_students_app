@@ -48,7 +48,7 @@ const MyProfile = () => {
                         <div className="profile-wid-bg">
                             <img src="assets/images/profile-bg.jpg" alt className="profile-wid-img" />
                             <img
-                                src='/assets/images/university.png' alt='Watermark' className='position-absolute top-50 start-50 translate-middle' style={{ width: "100%", height: "97%", opacity: "0.30"}}
+                                src='/assets/images/university.png' alt='Watermark' className='position-absolute top-50 start-50 translate-middle' style={{ width: "100%", height: "97%", opacity: "0.30" }}
                             />
                         </div>
                     </div>
@@ -95,7 +95,7 @@ const MyProfile = () => {
                                     <div className="tab-pane active" id="profile-tab" role="tabpanel">
                                         <div className="card">
                                             <div className="card-body">
-                                                <h5 className="card-title mb-3 mt-2">Student Information</h5>
+                                                <h5 className="card-title mb-3  mt-2">Student Information</h5>
                                                 <div className="table-responsive">
                                                     <table className="table table-striped table-bordered mb-0">
                                                         <div className='row d-flex col-12'>
@@ -109,54 +109,54 @@ const MyProfile = () => {
                                                             <div className="col-md-6 mb-3">
                                                                 <div className="p-2 border rounded">
                                                                     <strong>Student Name : </strong>
-                                                                    <span className="text-primary fw-bold">{profile.student_full_name}</span>
+                                                                    <span className="fw-bold text-success">{profile.student_full_name}</span>
                                                                 </div>
                                                             </div>
 
                                                             <div className="col-md-6 mb-3">
                                                                 <div className="p-2 border rounded">
                                                                     <strong>Gender : </strong>
-                                                                    <span className="text-primary fw-bold">{profile.gender}</span>
+                                                                    <span className="text-danger fw-bold">{profile.gender}</span>
                                                                 </div>
                                                             </div>
                                                             <div className="col-md-6 mb-3">
                                                                 <div className="p-2 border rounded">
                                                                     <strong>Student Aadhar No : </strong>
-                                                                    {profile.student_aadhar_no?.slice(-4).padStart(profile.student_aadhar_no.length, "X")}
+                                                                    <span className='fw-bold text-warning'>{profile.student_aadhar_no?.slice(-4).padStart(profile.student_aadhar_no.length, "X")}</span>
                                                                 </div>
                                                             </div>
 
                                                             <div className="col-md-6 mb-3">
                                                                 <div className="p-2 border rounded">
                                                                     <strong>Father Name : </strong>
-                                                                    <span className="text-primary fw-bold">{profile.father_name}</span>
+                                                                    <span className="">{profile.father_name}</span>
                                                                 </div>
                                                             </div>
 
                                                             <div className="col-md-6 mb-3">
                                                                 <div className="p-2 border rounded">
                                                                     <strong>Mother Name : </strong>
-                                                                    <span className="text-primary fw-bold">{profile.mother_name}</span>
+                                                                    <span className="">{profile.mother_name}</span>
                                                                 </div>
                                                             </div>
 
                                                             <div className="col-md-6 mb-3">
                                                                 <div className="p-2 border rounded">
                                                                     <strong>Mobile No : </strong>
-                                                                    <span className="text-primary fw-bold">{profile.mobile_number}</span>
+                                                                    <span className="text-secondary fw-bold">{profile.mobile_number}</span>
                                                                 </div>
                                                             </div>
                                                             <div className="col-md-6 mb-3">
                                                                 <div className="p-2 border rounded">
                                                                     <strong>Student Address : </strong>
-                                                                    <span className="text-primary fw-bold">{profile.student_address}</span>
+                                                                    <span className="">{profile.student_address}</span>
                                                                 </div>
                                                             </div>
 
                                                             <div className="col-md-6 mb-3">
                                                                 <div className="p-2 border rounded">
                                                                     <strong>Student City : </strong>
-                                                                    <span className="text-primary fw-bold">{profile.student_city}</span>
+                                                                    <span className="">{profile.student_city}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
