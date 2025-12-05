@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import images from '../../Utils/Images';
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { ConfigContext } from '../../Context/ConfigContext';
 
@@ -9,117 +8,161 @@ const Result = () => {
     const [data, setData] = useState({});
     const { student_subject_id } = useParams();
 
-
     const { apiURL, apiHeaderJson } = useContext(ConfigContext);
     const headers = apiHeaderJson;
-
-    console.log("student_subject_id", student_subject_id)
 
     const GetInfo = async () => {
         try {
             const response = await axios.get(`${apiURL}Students/GetProvisionExamInfo`, {
-                params: {
-                    student_subject_id: student_subject_id
-                }, headers
-            })
-            // console.log('response', response?.data)
-            setData(response.data.exam_info)
+                params: { student_subject_id },
+                headers
+            });
+            setData(response.data.exam_info);
         } catch (error) {
-            console.log('error', error)
+            console.log('error', error);
         }
-    }
+    };
 
     useEffect(() => {
         GetInfo();
-    }, [])
+    }, []);
 
     return (
         <>
             <div className='main-content'>
                 <div className='page-content'>
                     <div className='container-fluid'>
-                        <div className='container my-3 p-4 position-relative shadow-sm' style={{ background: "#fff", overflow: "hidden" }}>
+
+                        {/* CERTIFICATE BOX */}
+                        <div
+                            className="container my-4 p-5"
+                            style={{
+                                background: "#ffffff",
+                                border: "1px solid #dcdcdc",
+                                borderRadius: "10px",
+                                position: "relative",
+                                boxShadow: "0 0 10px rgba(0,0,0,0.05)"
+                            }}
+                        >
+                            {/* WATERMARK */}
                             <img
-                                src='/assets/images/itt_logo.png' alt='Watermark' className='position-absolute top-50 start-50 translate-middle' style={{ width: "55%", opacity: "0.07", pointerEvents: "none", zIndex: 1 }}
+                                src="/assets/images/itt_logo.png"
+                                alt="Watermark"
+                                style={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "50%",
+                                    width: "50%",
+                                    opacity: 0.06,
+                                    transform: "translate(-50%, -50%)",
+                                    pointerEvents: "none"
+                                }}
                             />
-                            <div className='position-relative' style={{ zIndex: 5 }}>
-                                <div className='row align-items-center'>
-                                    <div className='col-md-4 text-center'>
-                                        <img src="/assets/images/itt_logo.png" alt='itt-logo' className='img-fluid' style={{ height: "120px" }} />
-                                    </div>
-                                    <div className='col-md-8 text-center'>
-                                        <h3>IT & TECHNICAL EDUCATION COUNCIL <br />DELHI (ITT COUNCIL)</h3>
-                                        <h2 className='mt-3 fw-semibold text-decoration-underline'>Provisional Certificate</h2>
-                                    </div>
+
+                            <div style={{ position: "relative", zIndex: 10 }}>
+
+                                {/* HEADER */}
+                                <div className="text-center mb-4">
+                                    <img src="/assets/images/itt_logo.png" height="110" alt="logo" />
+
+                                    <h3 className="mt-3 mb-1"
+                                        style={{ fontWeight: 600, letterSpacing: ".5px" }}
+                                    >
+                                        IT & TECHNICAL EDUCATION COUNCIL, DELHI
+                                    </h3>
+
+                                    <h4 className="mt-2"
+                                        style={{ fontSize: "22px", fontWeight: 600, textDecoration: "underline" }}
+                                    >
+                                        Provisional Certificate
+                                    </h4>
                                 </div>
 
-                                <div className="mt-4 fs-5 ps-4">
-                                    <p>
-                                        This is to certify that <b>Mr./Ms. {data?.student_name}</b> <br />
-                                        pursuing <b>{data?.program_title}</b> <br />
-                                        having Enrollment Number <b>{data?.student_subject_id}</b> has
-                                        appeared for the <b>ITT Council Examination</b> <br />
-                                        on <b>{data?.exam_date}</b>.
-                                    </p>
-                                </div>
+                                {/* MAIN TEXT */}
+                                <p className="fs-5 mt-4" style={{ lineHeight: "1.7" }}>
+                                    This is to certify that <b>{data?.student_full_name}</b>,<br />
+                                    pursuing <b>{data?.program_title}</b>,<br />
+                                    having Enrollment Number <b>{data?.student_subject_id}</b>, has
+                                    appeared for the <b>ITT Council Examination</b> on <b>{data?.exam_date}</b>.
+                                </p>
 
-                                <div className='table-responsive mt-2'>
-                                    <table className='table table-bordered fs-6'>
-                                        <tbody>
-                                            <tr>
-                                                <td className='fw-semibold'>Course</td>
-                                                <th>{data?.subject_title} (OneMonth)</th>
-                                                <td className='fw-semibold'>Semester</td>
-                                                <th>{data?.subject_title} - Semester 1</th>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                {/* COURSE + SEMESTER TABLE */}
+                                <table className="table table-bordered mt-4" style={{ fontSize: "16px" }}>
+                                    <tbody>
+                                        <tr>
+                                            <th style={{ width: "180px", background: "#fafafa" }}>Course</th>
+                                            <td>{data?.subject_title} (One Month)</td>
 
-                                <div className='table-responsive mt-4'>
-                                    <table className='table table-bordered fs-5'>
-                                        <tbody>
-                                            <tr>
-                                                <td className='fw-semibold'>Total Marks</td>
-                                                <th>{data?.total_marks}</th>
-                                                <td className='fw-semibold'>Passing Marks</td>
-                                                <th>3.3</th>
-                                                <td className='fw-semibold'>Obtained Marks</td>
-                                                <th>{data?.obtain_marks}</th>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                            <th style={{ width: "180px", background: "#fafafa" }}>Semester</th>
+                                            <td>{data?.subject_title} - Semester 1</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                                <div className='mt-5 fs-6 text-center'>
-                                    <h5 className='text-center'>This certificate Is issued on behalf of the <b> Chairman, Information Technology and Technical Education  <br />
-                                        Council, Delhi.</b> The final printed certificate with percentage marks with photograph and Signature of the <br /> candidate shall
-                                        be issued later under seal and signature of the competent authorities of <b> ITT Council</b>, Delhi</h5>
-                                </div>
+                                {/* MARKS TABLE */}
+                                <table className="table table-bordered mt-4" style={{ fontSize: "16px" }}>
+                                    <tbody>
+                                        <tr>
+                                            <th style={{ background: "#fafafa" }}>Total Marks</th>
+                                            <td>{data?.total_marks}</td>
 
+                                            <th style={{ background: "#fafafa" }}>Passing Marks</th>
+                                            <td>{data?.passing__marks}</td>
+
+                                            <th style={{ background: "#fafafa" }}>Obtained Marks</th>
+                                            <td>{data?.obtain_marks}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                {/* NOTE */}
+                                <p className="mt-5 text-center"
+                                    style={{ lineHeight: "1.6", fontSize: "14px", color: "#555" }}
+                                >
+                                    This certificate is provisionally issued on behalf of the
+                                    <b> ITT Council, Delhi</b>.
+                                    The final printed certificate will include photograph, signature and
+                                    percentage under the official seal.
+                                </p>
+
+                                {/* SIGNATURE SECTION */}
                                 <div className="row mt-5">
                                     <div className="col text-center">
-                                        <p>
-                                            <b>Local Controller of Examination</b><br /><br />
-                                            __________________________
-                                        </p>
+                                        <p className="mb-0" style={{ fontWeight: 600 }}>Local Controller of Examination</p>
+                                        <div
+                                            style={{
+                                                marginTop: "40px",
+                                                height: "1px",
+                                                background: "#444",
+                                                width: "70%",
+                                                marginLeft: "auto",
+                                                marginRight: "auto"
+                                            }}
+                                        ></div>
                                     </div>
 
                                     <div className="col text-center">
-                                        <p>
-                                            <b>Head of Institute</b><br /><br />
-                                            __________________________
-                                        </p>
+                                        <p className="mb-0" style={{ fontWeight: 600 }}>Head of Institute</p>
+                                        <div
+                                            style={{
+                                                marginTop: "40px",
+                                                height: "1px",
+                                                background: "#444",
+                                                width: "70%",
+                                                marginLeft: "auto",
+                                                marginRight: "auto"
+                                            }}
+                                        ></div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </>
+    );
+};
 
-    )
-}
-
-export default Result
+export default Result;
