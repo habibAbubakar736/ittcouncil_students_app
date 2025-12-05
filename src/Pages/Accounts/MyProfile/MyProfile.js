@@ -7,7 +7,7 @@ const MyProfile = () => {
     const [profile, setProfile] = useState([]);
     const [program, setProgram] = useState([]);
     const { apiURL, apiHeaderJson, student_id, primaryColor } = useContext(ConfigContext);
-    const headers = apiHeaderJson;
+    const headers = apiHeaderJson
 
     const GetStudentProfile = async () => {
         try {
