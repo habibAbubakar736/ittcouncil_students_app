@@ -28,7 +28,7 @@ const Provision = () => {
   return (
     <div className="main-content">
       <div className="page-content">
-        <div className="container">
+        <div className="container-fluid">
           <div className='row'>
             <div className='col-md-12'>
               <br />
@@ -39,35 +39,37 @@ const Provision = () => {
                   <h5 className='card-title mb-0 text-white'>Provision</h5>
                 </div>
                 <div className="card-body">
-                  <div className='col-md-12'>
-
-
-                    <table className="table table-striped table-bordered">
-                      <thead>
+                  <div className='table-responsive table-card'>
+                    <table className="table table-striped table-bordered table-nowrap m-0">
+                      <thead className='table-light'>
                         <tr>
-                          <th>Enrolled Number</th>
+                          {/* <th>Enrolled Number</th> */}
+                          <th>#</th>
                           <th>Exam Date</th>
-                          <th>Subject Title</th>
                           <th>Program Title</th>
+                          <th>Course Title</th>
+                          <th>Subject Title</th>
                           <th>Total Marks</th>
-                          <th>Marks Obtain</th>
+                          <th>Marks Obtained</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         {
-                          data.map((item) => {
+                          data.map((item, i) => {
                             return (
                               <tr>
-                                <td className='fw-bold' style={{ color: primaryColor }}>{item.student_program_id}</td>
-                                <td style={{ color: primaryColor }}>{item.exam_date}</td>
-                                <td style={{ color: primaryColor }}>{item.subject_title}</td>
-                                <td style={{ color: primaryColor }} >{item.program_title}</td>
-                                <td style={{ color: primaryColor }}>{item.total_marks}</td>
-                                <td className='fw-bold' style={{ color: primaryColor }}>{item.obtain_marks}</td>
+                                {/* <td className='fw-bold'>{item.student_program_id}</td> */}
+                                <td>{i + 1}</td>
+                                <td>{item.exam_date || "-"}</td>
+                                <td>{item.program_title}</td>
+                                <td>{item.course_title}</td>
+                                <td>{item.subject_title}</td>
+                                <td>{item.total_marks}</td>
+                                <td className='fw-bold'>{item.obtain_marks}</td>
                                 <td className='text-center'>
                                   <Link to={`/Provision/Result/${item?.student_subject_id}`}>
-                                    <button className='btn btn-icon btn-sm btn-outline-success'>
+                                    <button className='btn btn-icon btn-sm btn-soft-success'>
                                       <i class="fa-regular fa-eye"></i>
                                     </button>
                                   </Link>

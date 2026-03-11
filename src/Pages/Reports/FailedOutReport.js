@@ -58,52 +58,58 @@ const FailedOutReport = () => {
                         </div>
 
                         <div className="card-body">
-                            <table className="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Enrolled Number</th>
-                                        <th>Subject Name</th>
-                                        <th>Subject Obtaining Marks</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        loading ?
-                                            <TableRows rows={limit} colSpan={10} />
-                                            :
-                                            data?.length > 0 ?
-                                                data?.map((item) => {
-                                                    return (
-                                                        <tr>
-                                                            <td className='text-success fw-bold'>{item?.student_program_id}</td>
-                                                            <td className='fw-bold' style={{ color: primaryColor }}>
-                                                                {item?.subject_title}
-                                                            </td>
-                                                            <td className='text-success fw-bold'>{item?.obtain_marks}</td>
-                                                            <td>
-                                                                {
-                                                                    item?.exam_status === 3 &&
-                                                                    <span className='badge bg-danger text-uppercase'>fail</span>
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                })
+                            <div className='table-responsive table-card'>
+                                <table className="table table-striped table-bordered table-nowrap m-0">
+                                    <thead className='table-light'>
+                                        <tr>
+                                            <td>#</td>
+                                            <th>Enrolled Number</th>
+                                            <th>Program Name</th>
+                                            <th>Course Name</th>
+                                            <th>Subject Name</th>
+                                            <th>Subject Obtaining Marks</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            loading ?
+                                                <TableRows rows={limit} colSpan={10} />
                                                 :
-                                                <NoRecords />
-                                    }
-                                </tbody>
-                                <TableFooter
-                                    prev={prev}
-                                    loading={loading}
-                                    totalRecords={totalRecords}
-                                    total_pages={total_pages}
-                                    page={page}
-                                    next={next}
-                                    setPage={setPage}
-                                />
-                            </table>
+                                                data?.length > 0 ?
+                                                    data?.map((item, i) => {
+                                                        return (
+                                                            <tr>
+                                                                <td>{i + 1}</td>
+                                                                <td className='text-success fw-bold'>{item?.student_program_id}</td>
+                                                                <td className='fw-bold' style={{ color: primaryColor }}>
+                                                                    {item?.subject_title}
+                                                                </td>
+                                                                <td className='text-success fw-bold'>{item?.obtain_marks}</td>
+                                                                <td>
+                                                                    {
+                                                                        item?.exam_status === 3 &&
+                                                                        <span className='badge bg-danger text-uppercase'>fail</span>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    })
+                                                    :
+                                                    <NoRecords />
+                                        }
+                                    </tbody>
+                                    <TableFooter
+                                        prev={prev}
+                                        loading={loading}
+                                        totalRecords={totalRecords}
+                                        total_pages={total_pages}
+                                        page={page}
+                                        next={next}
+                                        setPage={setPage}
+                                    />
+                                </table>
+                            </div>
                         </div>
 
                     </div>

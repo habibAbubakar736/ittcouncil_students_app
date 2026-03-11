@@ -21,7 +21,7 @@ const routes = [
 
   { path: "/Reports/PassOut", element: <PassOutReport /> },
   { path: "/Reports/FailedOut", element: <FailedOutReport /> },
-  { path: "/Provision/Provision", element: <Provision /> },
+  { path: "/Provision", element: <Provision /> },
   { path: "/Provision/Result/:student_subject_id?", element: <Result /> }
 
 ];

@@ -201,17 +201,11 @@ const Header = () => {
                                     </ul>
                                 </div>
                             </li>
-                            <li className='nav-item'>
-                                <a className='nav-link menu-link' href='#sidebarDashboard' data-bs-toogle="collapse" role='button' aria-expanded="false" aria-controls='sidebarDashboards'>
-                                    <i className='ri-dashboard-2-line' /> <span>Provision</span>
-                                </a>
-                                <div className="collapse menu-dropdown" id="sidebarDashboards">
-                                    <ul className="nav nav-sm flex-column">
-                                        <li className="nav-item">
-                                            <Link to="/Provision/Provision" className="nav-link" data-key="t-analytics"> Provision </Link>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/Provision">
+                                    <i className="ri-dashboard-2-line" />
+                                    <span>Provision</span>
+                                </Link>
                             </li>
 
                         </ul>

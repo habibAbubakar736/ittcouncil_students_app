@@ -1,3 +1,4 @@
+import './App.css';
 import { jwtDecode } from 'jwt-decode';
 import { useEffect } from 'react'
 import { ConfigProvider } from './Context/ConfigContext';

@@ -1,0 +1,169 @@
+/* Dashboard Animations */
+
+/* Welcome Card Animations */
+.welcome-card {
+    position: relative;
+    border: none;
+    animation: slideInDown 0.8s ease-out;
+}
+
+.welcome-avatar {
+    animation: bounceIn 0.8s ease-out 0.2s both;
+}
+
+.welcome-title {
+    animation: fadeInRight 0.8s ease-out 0.3s both;
+}
+
+.welcome-text {
+    animation: fadeInRight 0.8s ease-out 0.4s both;
+}
+
+.welcome-image-container {
+    animation: fadeInScale 0.8s ease-out 0.5s both;
+}
+
+.welcome-image {
+    max-height: 200px;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.welcome-image:hover {
+    transform: scale(1.05) rotate(2deg);
+}
+
+/* Animated Background Shapes */
+.welcome-bg-shape {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.shape-1 {
+    width: 200px;
+    height: 200px;
+    top: -50px;
+    right: -50px;
+    animation: float 8s ease-in-out infinite;
+}
+
+.shape-2 {
+    width: 150px;
+    height: 150px;
+    bottom: -30px;
+    left: -30px;
+    animation: float 6s ease-in-out infinite reverse;
+}
+
+.shape-3 {
+    width: 100px;
+    height: 100px;
+    top: 50%;
+    right: 30%;
+    animation: float 10s ease-in-out infinite;
+}
+
+/* Card Hover Animation */
+.card-animate {
+    transition: all 0.3s ease-in-out;
+}
+
+.card-animate:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Progress bar animation */
+.progress-bar {
+    transition: width 0.6s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+/* Keyframe Animations */
+@keyframes slideInDown {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
