@@ -24,7 +24,7 @@
 }
 
 .welcome-image {
-    max-height: 200px;
+    max-height: 160px;
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
     transition: transform 0.3s ease;
 }
@@ -165,5 +165,33 @@
 
     100% {
         transform: translateX(100%);
+    }
+}
+
+.animated-heading {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+
+    background: linear-gradient(110deg,
+            #2ECC71 20%,
+            #ff9800 60%,
+            #2ECC71 80%);
+
+    background-size: 300% 100%;
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    animation: shimmerWave 4s linear infinite;
+}
+
+@keyframes shimmerWave {
+    from {
+        background-position: 100% 50%;
+    }
+
+    to {
+        background-position: 0% 50%;
     }
 }

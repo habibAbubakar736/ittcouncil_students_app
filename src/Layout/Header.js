@@ -44,7 +44,7 @@ const Header = () => {
             >
                 <div className="layout-width">
                     <div className="navbar-header">
-                        <div className="d-flex">
+                        <div className="d-flex align-items-center">
                             {/* LOGO */}
                             <div className="navbar-brand-box horizontal-logo">
                                 <Link to="/" className="logo logo-dark">
@@ -71,6 +71,9 @@ const Header = () => {
                                     <span />
                                 </span>
                             </button>
+                            <h3 className="animated-heading">Information Technology and Technical Education Council</h3>
+                        </div>
+                        <div className="">
                         </div>
                         <div className="d-flex align-items-center">
                             <div className="dropdown ms-sm-3 header-item topbar-user">
@@ -104,39 +107,10 @@ const Header = () => {
                 </div>
             </header>
             {/* removeNotificationModal */}
-            <div id="removeNotificationModal" className="modal fade zoomIn" tabIndex={-1} aria-hidden="true">
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id="NotificationModalbtn-close" />
-                        </div>
-                        <div className="modal-body">
-                            <div className="mt-2 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style={{ width: 100, height: 100 }} />
-                                <div className="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                    <h4>Are you sure ?</h4>
-                                    <p className="text-muted mx-4 mb-0">
-                                        Are you sure you want to remove this Notification ?
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button" className="btn w-sm btn-light" data-bs-dismiss="modal">
-                                    Close
-                                </button>
-                                <button type="button" className="btn w-sm btn-danger" id="delete-notification">
-                                    Yes, Delete It!
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    {/* /.modal-content */}
-                </div>
-                {/* /.modal-dialog */}
-            </div>
+            <div id="removeNotificationModal"></div>
             {/* /.modal */}
             {/* ========== App Menu ========== */}
-            <div className="app-menu navbar-menu">
+            <div className="app-menu navbar-menu bg-success-subtle">
                 {/* LOGO */}
                 <div className="navbar-brand-box">
                     {/* Dark Logo*/}
@@ -165,45 +139,66 @@ const Header = () => {
                     <div className="container-fluid">
                         <div id="two-column-menu" />
                         <ul className="navbar-nav" id="navbar-nav">
-                            <li className="menu-title"><span data-key="t-menu">Menu</span></li>
+
+                            <li className="menu-title">
+                                <span data-key="t-menu">Menu</span>
+                            </li>
+
+                            {/* Dashboard */}
                             <li className="nav-item">
                                 <Link className="nav-link" to="/">
-                                    <i className="ri-dashboard-2-line" />
+                                    <i className="ri-dashboard-2-line"></i>
                                     <span>Dashboard</span>
                                 </Link>
                             </li>
+
+                            {/* Profile */}
                             <li className="nav-item">
                                 <Link className="nav-link" to="/Student/Profile">
-                                    <i className="ri-dashboard-2-line" />
+                                    <i className="ri-user-3-line"></i>
                                     <span>Profile</span>
                                 </Link>
                             </li>
-                            {/* <li className="nav-item">
-                                <Link className="nav-link" to="/Student/Programs">
-                                    <i className="ri-dashboard-2-line" />
-                                    <span>Programs</span>
-                                </Link>
-                            </li> */}
 
+                            {/* Reports */}
                             <li className="nav-item">
-                                <a className="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
-                                    <i className="ri-dashboard-2-line" /> <span>Reports</span>
+                                <a
+                                    className="nav-link menu-link"
+                                    href="#sidebarDashboards"
+                                    data-bs-toggle="collapse"
+                                    role="button"
+                                    aria-expanded="false"
+                                    aria-controls="sidebarDashboards"
+                                >
+                                    <i className="ri-file-chart-line"></i>
+                                    <span>Reports</span>
                                 </a>
+
                                 <div className="collapse menu-dropdown" id="sidebarDashboards">
                                     <ul className="nav nav-sm flex-column">
+
                                         <li className="nav-item">
-                                            <Link to="/Reports/PassOut" className="nav-link" data-key="t-analytics"> Passout </Link>
+                                            <Link to="/Reports/PassOut" className="nav-link">
+                                                <i className="ri-award-line"></i>
+                                                Passout
+                                            </Link>
                                         </li>
 
                                         <li className="nav-item">
-                                            <Link to="/Reports/FailedOut" className="nav-link" data-key="t-analytics"> Failout </Link>
+                                            <Link to="/Reports/FailedOut" className="nav-link">
+                                                <i className="ri-close-circle-line"></i>
+                                                Failout
+                                            </Link>
                                         </li>
+
                                     </ul>
                                 </div>
                             </li>
+
+                            {/* Provision */}
                             <li className="nav-item">
                                 <Link className="nav-link" to="/Provision">
-                                    <i className="ri-dashboard-2-line" />
+                                    <i className="ri-file-list-3-line"></i>
                                     <span>Provision</span>
                                 </Link>
                             </li>

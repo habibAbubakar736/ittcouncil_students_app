@@ -63,7 +63,8 @@ const FailedOutReport = () => {
                                     <thead className='table-light'>
                                         <tr>
                                             <td>#</td>
-                                            <th>Enrolled Number</th>
+                                            {/* <th>Enrolled Number</th> */}
+                                            <th>Franchise Name</th>
                                             <th>Program Name</th>
                                             <th>Course Name</th>
                                             <th>Subject Name</th>
@@ -81,8 +82,17 @@ const FailedOutReport = () => {
                                                         return (
                                                             <tr>
                                                                 <td>{i + 1}</td>
-                                                                <td className='text-success fw-bold'>{item?.student_program_id}</td>
-                                                                <td className='fw-bold' style={{ color: primaryColor }}>
+                                                                {/* <td className='text-success fw-bold'>{item?.student_program_id}</td> */}
+                                                                <td className='fw-bold'>
+                                                                    {item?.franchise_name}
+                                                                </td>
+                                                                <td className='fw-bold'>
+                                                                    {item?.program_title}
+                                                                </td>
+                                                                <td className='fw-bold'>
+                                                                    {item?.course_title}
+                                                                </td>
+                                                                <td className='fw-bold'>
                                                                     {item?.subject_title}
                                                                 </td>
                                                                 <td className='text-success fw-bold'>{item?.obtain_marks}</td>

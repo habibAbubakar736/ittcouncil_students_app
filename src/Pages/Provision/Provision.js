@@ -46,9 +46,10 @@ const Provision = () => {
                           {/* <th>Enrolled Number</th> */}
                           <th>#</th>
                           <th>Exam Date</th>
-                          <th>Program Title</th>
-                          <th>Course Title</th>
-                          <th>Subject Title</th>
+                          <th>Franchise Name</th>
+                          <th>Program Name</th>
+                          <th>Course Name</th>
+                          <th>Subject Name</th>
                           <th>Total Marks</th>
                           <th>Marks Obtained</th>
                           <th>Action</th>
@@ -61,11 +62,12 @@ const Provision = () => {
                               <tr>
                                 {/* <td className='fw-bold'>{item.student_program_id}</td> */}
                                 <td>{i + 1}</td>
-                                <td>{item.exam_date || "-"}</td>
-                                <td>{item.program_title}</td>
-                                <td>{item.course_title}</td>
-                                <td>{item.subject_title}</td>
-                                <td>{item.total_marks}</td>
+                                <td className='fw-bold'>{item.exam_date || "-"}</td>
+                                <td className='fw-bold'>{item.franchise_name}</td>
+                                <td className='fw-bold'>{item.program_title}</td>
+                                <td className='fw-bold'>{item.course_title}</td>
+                                <td className='fw-bold'>{item.subject_title}</td>
+                                <td className='fw-bold'>{item.total_marks}</td>
                                 <td className='fw-bold'>{item.obtain_marks}</td>
                                 <td className='text-center'>
                                   <Link to={`/Provision/Result/${item?.student_subject_id}`}>
